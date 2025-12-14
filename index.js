@@ -12,7 +12,7 @@ const app = express();
 app.use(
   cors({
     origin: ['http://localhost:5173',
-    'https://moneycash-nu.vercel.app/'
+    'https://moneycash-nu.vercel.app'
     ],
     credentials: false
   })
