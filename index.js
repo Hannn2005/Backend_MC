@@ -11,7 +11,9 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'http://localhost:5173', 
+    origin: ['http://localhost:5173',
+    'https://moneycash-nu.vercel.app/'
+    ],
     credentials: false
   })
 );
@@ -27,13 +29,7 @@ app.use('/api/dashboard', dashboardRoutes);
 
 const PORT = process.env.PORT || 4000;
 
-initDb()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`server berjalan di port ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error('DB init gagal', err);
-    process.exit(1);
-  });
+
+app.listen(PORT, () => {
+  console.log(`server berjalan di port ${PORT}`);
+});
