@@ -1,5 +1,6 @@
 const pool = require('../db')
 
+//Mengambil ringkasan data keuangan user
 exports.getDashboardSummary = async (req, res) => {
   const userId = req.user.id
 
