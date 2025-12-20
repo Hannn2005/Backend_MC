@@ -1,6 +1,6 @@
 const pool = require('../db')
 
-// ================= HELPER =================
+// ================= Helper =================
 async function getByType(userId, type, startDate, endDate) {
   let query = `
     SELECT id, category, description, amount, date
@@ -20,7 +20,31 @@ async function getByType(userId, type, startDate, endDate) {
   return result.rows
 }
 
-// ================= GET INCOME =================
+// ================= helper untuk logika pengeluaran !> pendapatan =================
+
+async function getCurrentBalance(userId) {
+  const result = await pool.query(
+    `
+    SELECT type, COALESCE(SUM(amount), 0) AS total
+    FROM transactions
+    WHERE user_id = $1
+    GROUP BY type
+    `,
+    [userId]
+  )
+
+  let income = 0
+  let expense = 0
+
+  result.rows.forEach((row) => {
+    if (row.type === 'INCOME') income = Number(row.total)
+    if (row.type === 'EXPENSE') expense = Number(row.total)
+  })
+
+  return income - expense
+}
+
+// =================  =================
 exports.getIncome = async (req, res) => {
   const { startDate, endDate } = req.query
 
@@ -90,6 +114,15 @@ exports.addExpense = async (req, res) => {
   }
 
   try {
+    const balance = await getCurrentBalance(req.user.id)
+
+    if (Number(amount) > balance) {
+      return res.status(400).json({
+        message: 'Pengeluaran melebihi pendapatan saat ini',
+        balance
+      })
+    }
+
     const result = await pool.query(
       `
       INSERT INTO transactions (user_id, type, category, description, amount, date)
@@ -105,6 +138,7 @@ exports.addExpense = async (req, res) => {
     res.status(500).json({ message: 'Server error' })
   }
 }
+
 
 // ================= DELETE =================
 exports.deleteTransaction = async (req, res) => {

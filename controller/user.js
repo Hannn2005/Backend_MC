@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const pool = require('../db')
 
-// ================= REGISTER =================
+
 exports.register = async (req, res) => {
   const { username, email, password } = req.body
 
@@ -44,7 +44,7 @@ exports.register = async (req, res) => {
   }
 }
 
-// ================= LOGIN =================
+
 exports.login = async (req, res) => {
   const { email, password } = req.body
 
@@ -80,7 +80,7 @@ exports.login = async (req, res) => {
   }
 }
 
-// ================= GET CURRENT USER =================
+
 exports.getMe = async (req, res) => {
   try {
     const result = await pool.query(
@@ -94,7 +94,7 @@ exports.getMe = async (req, res) => {
   }
 }
 
-// ================= DELETE ACCOUNT =================
+
 exports.deleteMe = async (req, res) => {
   try {
     await pool.query(
